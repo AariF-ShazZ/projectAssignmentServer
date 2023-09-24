@@ -89,7 +89,27 @@ const getData = async (req, res) => {
     }
 }
 
-const updateData = async (req, res) => {
+const updateDataPut = async (req, res) => {
+    const ID = req.params.id;
+    const payload = req.body;
+    try {
+        const updatedProduct = await ProductsModel.findByIdAndUpdate(ID, payload, { new: true });
+
+        if (updatedProduct) {
+            const remainingData = await ProductsModel.find();
+            res.status(200).json({
+                message: `Updated the Product whose id is ${ID}`,
+                data: remainingData,
+            });
+        } else {
+            res.status(404).json({ message: `Product with id ${ID} not found` });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+const updateDataPatch = async (req, res) => {
     const ID = req.params.id;
     const payload = req.body;
     try {
@@ -133,4 +153,4 @@ const deleteData = async (req, res) => {
     }
 };
 
-module.exports = { postData, getData, updateData, deleteData, singleData,getAllCategory }
+module.exports = { postData, getData, updateDataPut, deleteData, singleData,getAllCategory,updateDataPatch }
